@@ -1,34 +1,66 @@
 import flet as ft
 import requests
 
-# Función para hablar con LLaMA
-def chat_with_llama(prompt):
-    response = requests.post("http://localhost:11434/api/generate", json={
-        "model": "llama2",
-        "prompt": prompt,
-        "stream": False
-    })
-    return response.json()["response"]
+API_KEY = "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"     #La key para usar a LLAMA3 con Groq
 
-# Función principal de la app
-def main(page: ft.Page):
-    page.title = "Chat con LLaMA 2 (local)"
-    chat_box = ft.TextField(multiline=True, expand=True, read_only=True, value="", height=400)
-    input_box = ft.TextField(label="Tu mensaje", autofocus=True, on_submit=lambda e: send_message(None))
-    send_btn = ft.ElevatedButton("Enviar", on_click=lambda e: send_message(None))
+conversacion = [   #Dónde esta escrito el "Eres una asistente..." pueden decirle como debe actuar la IA, ayer estaba probando que puedes decirle cualquier cosa y actuará así, así que pueden ir probando con literalmente cualquier personalidad xd.
+    {"role": "system", "content": "Eres una asistente educativa simpática, energética y tierna llamada Telmi, te interesa mucho el mundo tecnológico y también eres creada por y para estudiantes de la universidad federico santa maría en Chile. Ten en cuenta que tu fin es recomendar técnicas de estudio y apoyar en la organización."}
+]
+#Conecta llama con la API de Groq
+def pedir_a_llama():
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-    def send_message(_):
-        prompt = input_box.value.strip()
-        if prompt == "":
+    data = {
+        "model": "llama3-8b-8192",
+        "messages": conversacion,
+        "temperature": 0.7
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"]
+    else:
+        return "Error al consultar con Telmi, RIP TELMI."
+
+def telmichat(page: ft.Page):
+    page.scroll = "auto"
+
+    entrada_usuario = ft.TextField(label="Escribe tu duda", multiline=True, expand=True)   
+    chat_area = ft.Column(scroll="always", expand=True)
+    
+    #envía tu pregunta
+    def enviar(e):
+        pregunta = entrada_usuario.value.strip()
+        if not pregunta:
             return
-        chat_box.value += f"Tú: {prompt}\n"
-        input_box.value = ""
-        page.update()
-        response = chat_with_llama(prompt)
-        chat_box.value += f"LLaMA: {response}\n\n"
+
+        # Agrega tú pregunta a un "Historial"
+        conversacion.append({"role": "user", "content": pregunta})
+
+        # Mostrar en pantalla
+        chat_area.controls.append(ft.Text(f"Tú: {pregunta}", selectable=True))
+        entrada_usuario.value = ""
         page.update()
 
-    page.add(chat_box, input_box, send_btn)
+        # Obtener respuesta de la IA
+        respuesta = pedir_a_llama()
 
-# Ejecutar la app
+        # Muestra la respuesta de Telmi
+        conversacion.append({"role": "assistant", "content": respuesta})
+        chat_area.controls.append(ft.Text(f"Telmi: {respuesta}", selectable=True))
+        page.update()
+
+    boton = ft.ElevatedButton("Enviar", on_click=enviar)
+
+    page.add(
+        ft.Text("Telmi-chan chat", size=20),
+        chat_area,
+        entrada_usuario,
+        boton
+    )
+
 ft.app(target=main)
