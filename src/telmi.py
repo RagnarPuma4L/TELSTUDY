@@ -7,7 +7,7 @@ conversacion = [   #Dónde esta escrito el "Eres una asistente..." pueden decirl
     {"role": "system", "content": "Eres una asistente educativa simpática, energética y tierna llamada Telmi, te interesa mucho el mundo tecnológico y también eres creada por y para estudiantes de la universidad federico santa maría en Chile. Ten en cuenta que tu fin es recomendar técnicas de estudio y apoyar en la organización."}
 ]
 #Conecta llama con la API de Groq
-def pedir_a_llama():
+def main():
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {API_KEY}",
