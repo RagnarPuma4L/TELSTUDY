@@ -1,19 +1,29 @@
 import flet as ft
 import requests
 
-API_KEY = "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"     #La key para usar a LLAMA3 con Groq
+# API de Groq
+API_KEY = "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"
 
-conversacion = [   #Dónde esta escrito el "Eres una asistente..." pueden decirle como debe actuar la IA, ayer estaba probando que puedes decirle cualquier cosa y actuará así, así que pueden ir probando con literalmente cualquier personalidad xd.
-    {"role": "system", "content": "Eres una asistente educativa simpática, energética y tierna llamada Telmi, te interesa mucho el mundo tecnológico y también eres creada por y para estudiantes de la universidad federico santa maría en Chile. Ten en cuenta que tu fin es recomendar técnicas de estudio y apoyar en la organización."}
+# Personalidad de Telmi
+conversacion = [
+    {
+        "role": "system",
+        "content": (
+            "Eres una asistente educativa simpática, energética y tierna llamada Telmi. "
+            "Te interesa mucho el mundo tecnológico y fuiste creada por y para estudiantes de la Universidad Federico Santa María "
+            "Tu objetivo es recomendar técnicas de estudio y apoyar en la organización del tiempo"
+            "Responde de manera corta, a menos que sea alguna pregunta seria."
+        )
+    }
 ]
-#Conecta llama con la API de Groq
+
+# Trae a Llama
 def pedir_a_llama():
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
-
     data = {
         "model": "llama3-8b-8192",
         "messages": conversacion,
@@ -21,46 +31,120 @@ def pedir_a_llama():
     }
 
     response = requests.post(url, headers=headers, json=data)
+
     if response.status_code == 200:
         return response.json()["choices"][0]["message"]["content"]
     else:
         return "Error al consultar con Telmi, RIP TELMI."
+    
 
-def main(page: ft.Page):
+#BURBUJAS DE MENSAJE
+def burbuja_mensaje(texto, es_usuario):
+    return ft.Row(
+        alignment=ft.MainAxisAlignment.END if es_usuario else ft.MainAxisAlignment.START,
+        controls=[
+            ft.Container(
+                content=ft.Text(texto),
+                padding=10,
+                margin=ft.margin.only(top=5, bottom=5, left=10, right=10),
+                bgcolor=ft.Colors.WHITE70 if es_usuario else ft.Colors.WHITE,
+                border_radius=ft.border_radius.all(12),
+                width=400,
+            )
+        ]
+    )
+
+
+
+# PARTE VISUAL
+def telmi_ai(page: ft.Page):
+    
     page.scroll = "auto"
 
-    entrada_usuario = ft.TextField(label="Escribe tu duda", multiline=True, expand=True)   
-    chat_area = ft.Column(scroll="always", expand=True)
-    
-    #envía tu pregunta
     def enviar(e):
         pregunta = entrada_usuario.value.strip()
         if not pregunta:
             return
 
-        # Agrega tú pregunta a un "Historial"
+        # GUARDAR PREGUNTA
         conversacion.append({"role": "user", "content": pregunta})
 
-        # Mostrar en pantalla
-        chat_area.controls.append(ft.Text(f"Tú: {pregunta}", selectable=True))
+        # MUESTRA PREGUNTA EN PANTALLA
+        chat_area.controls.append(burbuja_mensaje(f"Tú: {pregunta}", es_usuario=True))
         entrada_usuario.value = ""
         page.update()
 
-        # Obtener respuesta de la IA
+
+        # CONSIGUE RESPUESTA DE TELMI
         respuesta = pedir_a_llama()
 
-        # Muestra la respuesta de Telmi
+        # MUESTRA RESPUESTA DE TELMI
         conversacion.append({"role": "assistant", "content": respuesta})
-        chat_area.controls.append(ft.Text(f"Telmi: {respuesta}", selectable=True))
+        chat_area.controls.append(burbuja_mensaje(f"Telmi: {respuesta}", es_usuario=False))
         page.update()
-
-    boton = ft.ElevatedButton("Enviar", on_click=enviar)
-
-    page.add(
-        ft.Text("Telmi-chan chat", size=20),
-        chat_area,
-        entrada_usuario,
-        boton
+     
+     #Entrada para escribir tu pregunta
+    entrada_usuario = ft.TextField(
+        label="Escribe tu duda",
+        multiline=False,
+        expand=True,
+        fill_color=ft.Colors.WHITE,
+        border_color=ft.Colors.WHITE,
+        on_submit=enviar
     )
 
-ft.app(target=main)
+    chat_area = ft.Column(scroll="always", expand=True)
+  
+
+  #Literal solo el texto e imagen de Telmi arriba :v (Y aún así es harto código)
+    encabezado_telmi = ft.Row(
+        alignment=ft.MainAxisAlignment.CENTER,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Container(
+                content=ft.Image(src="telmiclon.jpg", width=50, height=50, fit=ft.ImageFit.COVER),
+                width=50,
+                height=50,
+                border_radius=25,
+                clip_behavior=ft.ClipBehavior.ANTI_ALIAS
+            ),
+            ft.Text("Telmi", size=24, weight="bold", color=ft.Colors.ON_SECONDARY_CONTAINER)
+        ]
+    )
+
+    telmi_text = ft.Column(
+        controls=[
+            encabezado_telmi,
+            ft.Text("Telmi")
+        ]
+    )
+
+#ICONO PARA ENVIAR
+    mensaje_enviar = ft.Row(
+        controls=[
+            entrada_usuario,
+            ft.IconButton(
+                icon=ft.Icons.SEND,
+                tooltip="Enviar",
+                on_click=enviar,
+                bgcolor=ft.Colors.WHITE
+            ),
+        ],
+    )
+
+    #CONVIERTE TODO EN UN WIDGET REUSABLE CON ALGUNOS COMPONENTES VISUALES QUE FÁCILMENTE SE PUEDE AGREGAR EN MAIN.PY
+    return ft.Card(
+        content=ft.Container(
+            content=ft.Column([
+                encabezado_telmi,
+                chat_area,
+                mensaje_enviar
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
+            padding=20,
+            bgcolor=ft.Colors.SECONDARY_CONTAINER,
+            border_radius=15,
+            expand=True,
+        ),
+    )
