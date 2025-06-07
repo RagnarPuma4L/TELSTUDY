@@ -190,8 +190,8 @@ def main(page: ft.Page):
         indicator_color="#4338CA"
     )
 
-    # Inicio mostrando la pantalla principal
+    # pantalla principal
     mostrar_inicio(None)
 
-# Ejecutar la aplicación
+# PROGRAMA
 ft.app(target=main, assets_dir="assets")
