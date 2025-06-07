@@ -1,6 +1,6 @@
-import flet as ft
+mport flet as ft
 
-def crear_lista_tareas(page: ft.Page, volver_callback):
+def crear_lista_tareas(page: ft.Page):
     page.clean()
 
     tareas = ft.Column()
@@ -14,7 +14,6 @@ def crear_lista_tareas(page: ft.Page, volver_callback):
             page.update()
 
     def crear_tarea(texto):
-        # Texto original como TextField, oculto por defecto
         texto_tarea = ft.Text(value=texto, expand=True)
         campo_edicion = ft.TextField(value=texto, expand=True, visible=False)
 
