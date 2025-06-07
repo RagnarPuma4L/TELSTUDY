@@ -1,4 +1,4 @@
-mport flet as ft
+import flet as ft
 
 def crear_lista_tareas(page: ft.Page):
     page.clean()
