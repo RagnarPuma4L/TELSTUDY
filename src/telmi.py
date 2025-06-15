@@ -2,7 +2,7 @@ import flet as ft
 import requests
 
 # API de Groq
-API_KEY = "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"
+API_KEY = "[API_KEY]"
 
 # Personalidad de Telmi
 conversacion = [
