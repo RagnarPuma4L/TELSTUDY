@@ -1,7 +1,7 @@
 #lIBRERIAS E IMPORTACIÓN DE OTROS ARCHIVOS .PY
 import flet as ft
 import random
-from tasks import crear_lista_tareas
+from pomodoro import pomodoro
 from notas import crear_zona_notas
 from telmi import telmi_ai
 
@@ -144,11 +144,11 @@ def main(page: ft.Page):
         page.add(modo, fila_modos, navigation_bar)
         page.update()
 
-    # Lista de Pomodoro Simple
+    #Pomodoro Simple
     def simple_pom(e):
         page.clean()
-        lista_tareas_ui = crear_lista_tareas(page, change_study)
-        page.add(lista_tareas_ui, navigation_bar)
+        pomodoro(page)
+        page.add(navigation_bar)
         page.update()
 
     # Telmi IA
@@ -190,8 +190,8 @@ def main(page: ft.Page):
         indicator_color="#4338CA"
     )
 
-    # pantalla principal
+    # Inicio mostrando la pantalla principal
     mostrar_inicio(None)
 
-# PROGRAMA
+# Ejecutar la aplicación
 ft.app(target=main, assets_dir="assets")
