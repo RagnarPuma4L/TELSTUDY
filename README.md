@@ -1,2 +1,2 @@
-# TelePlanner
-Repositorio para proyecto Telematic Planning Tool
+# Telstudy
+Repositorio para proyecto Telematic´s Study Tool
