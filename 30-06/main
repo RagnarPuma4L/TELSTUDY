@@ -1,5 +1,4 @@
 import flet as ft
-import random
 from pomsim import pomodoro
 from notas import crear_zona_notas
 from telmi import telmi_ai, widget_frase_motivadora
@@ -70,15 +69,6 @@ def main(page: ft.Page):
             shadow=ft.BoxShadow(
             color="#1E40AF", blur_radius=10, offset=ft.Offset(0, 4)
             ))
-
-
-        frase_motivadora = ft.Text(
-            "lol",
-            style=page.theme.text_theme.body_medium,
-            italic=True,
-            text_align=ft.TextAlign.CENTER,
-            color="#CBD5E1"
-        )
 
         frase_con_telmi = ft.Row(
             controls=[
