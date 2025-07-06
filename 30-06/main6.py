@@ -723,7 +723,7 @@ def main(page: ft.Page):
             izquierda = ft.Column([
                 ft.Row([temporizador_card,temporizador_card2], alignment = ft.MainAxisAlignment.CENTER),
                 ft.Row([work_hour_input, work_min_input, work_sec_input, reasignar_btn], spacing=10, alignment = ft.MainAxisAlignment.CENTER),
-                ft.Row([work_hour_input, rest_min_input, rest_sec_input, stop_btn ], spacing=10,alignment = ft.MainAxisAlignment.CENTER),
+                ft.Row([rest_hour_input, rest_min_input, rest_sec_input, stop_btn ], spacing=10,alignment = ft.MainAxisAlignment.CENTER),
                 ft.Row([confirm_btn, start_btn], spacing=10, vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER),
                 output
             ], spacing=25,alignment= ft.CrossAxisAlignment.CENTER )
