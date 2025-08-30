@@ -1,4 +1,4 @@
 # Telematic´s Study Tool
 Repositorio para proyecto Telematic´s Study Tool
 
-PAUSADO
+Última versión en archivo zip
