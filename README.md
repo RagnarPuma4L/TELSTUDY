@@ -1,2 +1,2 @@
-# Telstudy
-Repositorio para proyecto Telematic´s Study Tool
+# Telematic´s Study Tool
+PAUSADO
